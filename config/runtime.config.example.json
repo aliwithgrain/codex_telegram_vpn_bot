@@ -1,0 +1,47 @@
+{
+  "plans": [
+    {
+      "id": "test-1gb-1day",
+      "name": "پلن تست",
+      "durationDays": 1,
+      "quotaGb": 1,
+      "priceToman": 0,
+      "isTest": true,
+      "enabled": true
+    },
+    {
+      "id": "basic-30gb-30d",
+      "name": "پایه 30 گیگ",
+      "durationDays": 30,
+      "quotaGb": 30,
+      "priceToman": 199000,
+      "isTest": false,
+      "enabled": true
+    }
+  ],
+  "notifications": {
+    "lowUsageThresholdPercent": 10,
+    "expiryWarningDays": 2,
+    "allowUserDisable": true,
+    "messages": {
+      "paymentSuccess": "پرداخت موفق",
+      "paymentFailed": "پرداخت ناموفق"
+    }
+  },
+  "subscriptionPolicy": {
+    "activateNextAfterPreviousEnds": true,
+    "endOnTimeOrQuota": true,
+    "statuses": ["active", "expired", "depleted", "disabled"]
+  },
+  "jobs": {
+    "usageSyncHours": 1,
+    "expiryCheckHours": 2,
+    "backupDaily": true
+  },
+  "display": {
+    "usageUnit": "GB",
+    "showPercent": false,
+    "calendar": "jalali+gregorian",
+    "language": "fa"
+  }
+}
