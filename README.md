@@ -330,7 +330,7 @@ npm test   || echo "no tests"
 
 ## Troubleshooting (رفع مشکلات رایج)
 
-### ⚠ Bot پاسخ نمی‌دهد
+### ⚠ بات پاسخ نمی‌دهد
 
 * مطمئن شوید Bot Token معتبر باشد
 * `ADMIN_IDS` را درست وارد کرده باشید
