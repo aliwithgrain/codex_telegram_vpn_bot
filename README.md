@@ -62,8 +62,7 @@ npm run setup
 
 ### 7) بررسی صحت سینتکس و تست‌ها
 ```bash
-npm run check
-npm test
+npm run final-check
 ```
 
 ### 8) اجرای ربات
@@ -171,8 +170,7 @@ docker compose up -d --build
 بعد از هر مرج این‌ها را اجرا کنید تا ناسازگاری سریع مشخص شود:
 ```bash
 git log --oneline --decorate -n 15
-npm run check
-npm test
+npm run final-check
 ```
 
-اگر CI/CD دارید، همین سه مرحله را به‌عنوان گیت CI Gate قرار دهید.
+اگر CI/CD دارید، همین دو مرحله را به‌عنوان گیت CI Gate قرار دهید.

@@ -12,6 +12,7 @@
     "start": "node src/index.js",
     "plans": "node src/manage-plans.js",
     "check": "node --check src/index.js && node --check src/setup.js && node --check src/manage-plans.js && node --check src/lib/runtime-config.js",
+    "final-check": "npm run check && npm test",
     "test": "node --test"
   },
   "dependencies": {
