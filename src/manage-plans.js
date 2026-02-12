@@ -1,4 +1,12 @@
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
 const { loadRuntimeConfig, saveRuntimeConfig } = require('./lib/runtime-config');
+
+const envPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 function help() {
   console.log(`
@@ -78,6 +86,9 @@ function main() {
     const idx = findPlanIndex(config.plans, id);
     if (idx < 0) {
       throw new Error('plan پیدا نشد.');
+    }
+    if (config.plans.length <= 1) {
+      throw new Error('حداقل یک plan باید باقی بماند. ابتدا یک plan جدید اضافه کنید.');
     }
     config.plans.splice(idx, 1);
     saveRuntimeConfig(config, configPath);
