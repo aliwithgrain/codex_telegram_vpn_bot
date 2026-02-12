@@ -16,7 +16,7 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl git ca-certificates
 ````
 
-### 2) نصب Node.js 20
+### 2) نصب Node.js
 
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
