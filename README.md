@@ -102,5 +102,3 @@ docker compose up -d --build
 * `src/manage-plans.js` CLI پلن‌ها
 * `config/runtime.config.json` تنظیمات پویا
 * `.env.example` نمونه متغیرها
-
-```
