@@ -1,16 +1,26 @@
 # codex_telegram_vpn_bot
 
-ربات تلگرام فروش و مدیریت اشتراک VPN (3x-ui) با معماری قابل نصب چندباره روی سرورهای مختلف.
+ربات تلگرام فروش و مدیریت اشتراک VPN (3x-ui) با معماری قابل‌نصب مجدد روی چند سرور.
+
+## قابلیت‌ها
+- راه‌اندازی سریع با ویزارد `npm run setup` برای ساخت/به‌روزرسانی `.env`.
+- فایل تنظیمات پویا (`runtime.config.json`) برای مدیریت پلن‌ها و اعلان‌ها بدون تغییر کد.
+- CLI مدیریت پلن‌ها (`npm run plans -- ...`) برای افزودن/حذف/فعال‌سازی پلن‌ها.
+- اعتبارسنجی ورودی‌ها در زمان اجرا برای جلوگیری از کانفیگ‌های ناسالم.
 
 ## پیش‌نیازها
-- Ubuntu 24.04 (VPS)
-- Node.js نسخه **20 یا بالاتر** (مطابق `engines.node` در `package.json`)
+- Ubuntu 24.04 (پیشنهادی)
+- Node.js نسخه `20+`
 - npm
-- یک ربات تلگرام (Bot Token)
+- Bot Token تلگرام
+- دسترسی به پنل 3x-ui
+- (اختیاری) MySQL در صورت استفاده از تنظیمات DB
 
-## نصب کامل روی VPS (Ubuntu 24.04)
+---
 
-### 1) آپدیت سرور و نصب ابزارهای پایه
+## نصب مرحله‌به‌مرحله روی VPS
+
+### 1) به‌روزرسانی سیستم و نصب ابزارهای پایه
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl git ca-certificates
@@ -22,71 +32,93 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
-بررسی نسخه:
+### 3) بررسی نسخه Node و npm
 ```bash
 node -v
 npm -v
 ```
+> نسخه Node باید 20 یا بالاتر باشد.
 
-### 3) دریافت سورس پروژه
+### 4) کلون پروژه
 ```bash
 git clone <YOUR_REPO_URL>
 cd codex_telegram_vpn_bot
 ```
 
-### 4) نصب وابستگی‌ها
+### 5) نصب وابستگی‌ها
 ```bash
-npm install
+npm ci
 ```
+> اگر `npm ci` خطا داد (مثلاً lock file ناسازگار بود)، از `npm install` استفاده کنید.
 
-### 5) اجرای wizard نصب (ساخت `.env`)
+### 6) اجرای ویزارد راه‌اندازی
 ```bash
 npm run setup
 ```
+این مرحله موارد زیر را انجام می‌دهد:
+- گرفتن مقادیر `.env` (توکن، ادمین، DB، پنل 3x-ui و ...)
+- ایجاد/به‌روزرسانی فایل `config/runtime.config.json` بر اساس فایل نمونه
+- امکان تنظیم سریع آستانه اعلان مصرف و اعلان انقضا
 
-> اگر به هر دلیل اسکریپت `setup` در `package.json` وجود نداشت، همین دستور معادل را اجرا کنید:
+### 7) بررسی صحت سینتکس و تست‌ها
 ```bash
-node src/setup.js
+npm run check
+npm test
 ```
 
-### 6) اجرای ربات
+### 8) اجرای ربات
 ```bash
 npm run start
 ```
 
-> اگر اسکریپت `start` وجود نداشت:
+---
+
+## راهنمای نصب سریع با اسکریپت
+برای نصب سریع، اسکریپت آماده وجود دارد:
 ```bash
-node src/index.js
+bash install.sh
 ```
+این اسکریپت:
+- Node.js و npm را چک می‌کند.
+- نسخه Node را (20+) اعتبارسنجی می‌کند.
+- وابستگی‌ها را نصب می‌کند (`npm ci` و fallback به `npm install`).
+- ویزارد setup را اجرا می‌کند.
 
 ---
 
-## مدیریت پلن‌ها و اعلان‌ها
+## مدیریت پلن‌ها و اعلان‌ها (CLI)
 
-فرمان‌های CLI برای مدیریت سریع:
+### نمایش وضعیت
 ```bash
 npm run plans -- list
+```
+
+### افزودن پلن
+```bash
 npm run plans -- add pro-50gb "پلن پرو" 30 50 349000
+```
+
+### غیرفعال/فعال‌کردن پلن
+```bash
 npm run plans -- disable pro-50gb
+npm run plans -- enable pro-50gb
+```
+
+### حذف پلن
+```bash
 npm run plans -- remove pro-50gb
+```
+> حذف آخرین پلن فعال/موجود مجاز نیست.
+
+### تغییر آستانه اعلان‌ها
+```bash
 npm run plans -- set-threshold 10
 npm run plans -- set-expiry-warning 2
 ```
 
-> اگر اسکریپت `plans` وجود نداشت:
-```bash
-node src/manage-plans.js list
-node src/manage-plans.js add pro-50gb "پلن پرو" 30 50 349000
-node src/manage-plans.js disable pro-50gb
-node src/manage-plans.js remove pro-50gb
-node src/manage-plans.js set-threshold 10
-node src/manage-plans.js set-expiry-warning 2
-```
-
 ---
 
-## اجرای دائمی در VPS (پیشنهادی با PM2)
-
+## اجرای دائمی با PM2 (پیشنهادی)
 ```bash
 sudo npm i -g pm2
 pm2 start src/index.js --name telegram-vpn-bot
@@ -94,48 +126,53 @@ pm2 save
 pm2 startup
 ```
 
-برای مشاهده لاگ:
+### دستورات کاربردی PM2
 ```bash
 pm2 logs telegram-vpn-bot
-```
-
-برای ری‌استارت:
-```bash
 pm2 restart telegram-vpn-bot
+pm2 status
 ```
 
-## Docker
+---
+
+## اجرای Docker
 ```bash
 docker compose up -d --build
 ```
 
-> قبل از اجرای Docker باید `.env` موجود باشد (از طریق `npm run setup` یا `node src/setup.js`).
+نکات:
+- قبل از اجرای Docker فایل `.env` باید ساخته شده باشد.
+- در صورت تغییر کانفیگ، کانتینر را بازسازی کنید.
+
+---
 
 ## نصب روی aaPanel
-- یک Node.js Project بسازید.
-- سورس ریپو را Deploy کنید.
-- `npm install` را اجرا کنید.
-- یک‌بار در ترمینال پروژه `npm run setup` (یا `node src/setup.js`) را اجرا کنید تا `.env` ساخته شود.
-- Startup Command را `npm run start` (یا `node src/index.js`) قرار دهید.
+1. یک **Node.js Project** بسازید.
+2. سورس ریپو را Deploy کنید.
+3. در ترمینال پروژه `npm ci` اجرا کنید.
+4. یک‌بار `npm run setup` اجرا کنید تا `.env` و runtime config تنظیم شود.
+5. Startup Command را `npm run start` قرار دهید.
 
-## تنظیمات قابل ویرایش بعد از نصب
-- فایل پیش‌فرض تنظیمات پویا:
-  - `config/runtime.config.json`
-- مثال ساختار:
-  - `config/runtime.config.example.json`
+---
 
-مواردی که بعداً قابل ویرایش هستند:
-- لیست پلن‌ها (افزودن/حذف/غیرفعال/فعال)
-- درصد هشدار مصرف کم
-- روز هشدار انقضا
-- پیام‌های اعلان موفق/ناموفق
-- تنظیمات نمایش و jobها
+## فایل‌های کلیدی پروژه
+- `src/index.js`: نقطه شروع ربات
+- `src/setup.js`: ویزارد راه‌اندازی و تولید `.env`
+- `src/manage-plans.js`: CLI مدیریت پلن‌ها و اعلان‌ها
+- `src/lib/runtime-config.js`: بارگذاری/اعتبارسنجی/ذخیره runtime config
+- `.env.example`: نمونه متغیرهای محیطی
+- `config/runtime.config.example.json`: نمونه کامل تنظیمات پویا
+- `install.sh`: نصب سریع نیمه‌خودکار
+- `PROJECT_SPEC_FA.md`: مشخصات محصول
 
-## فایل‌های مهم
-- `PROJECT_SPEC_FA.md`: مشخصات نهایی محصول.
-- `src/setup.js`: wizard نصب برای گرفتن اطلاعات هر سرور.
-- `src/index.js`: اجرای ربات + بارگذاری تنظیمات پویا.
-- `src/manage-plans.js`: مدیریت CLI برای پلن‌ها/آستانه اعلان.
-- `src/lib/runtime-config.js`: loader/saver تنظیمات پویا.
-- `.env.example`: نمونه کلیدهای env.
-- `config/runtime.config.example.json`: نمونه کامل متغیرهای قابل تعریف.
+---
+
+## چک‌لیست بازبینی بعد از مرج (پیشنهادی)
+بعد از هر مرج این‌ها را اجرا کنید تا ناسازگاری سریع مشخص شود:
+```bash
+git log --oneline --decorate -n 15
+npm run check
+npm test
+```
+
+اگر CI/CD دارید، همین سه مرحله را به‌عنوان گیت CI Gate قرار دهید.
