@@ -9,8 +9,7 @@
 - Bot Token تلگرام (BotFather)
 - دسترسی به پنل 3x-ui
 
-## نصب و اجرا روی VPS (Ubuntu 24)
-
+## نصب و اجرا
 ### 1) نصب ابزارهای پایه
 ```bash
 sudo apt update && sudo apt upgrade -y
