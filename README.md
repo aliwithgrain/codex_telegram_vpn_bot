@@ -46,6 +46,19 @@ npm run plans -- set-threshold 10
 npm run plans -- set-expiry-warning 2
 ```
 
+
+## بازبینی ایمنی تنظیمات (Risk Fixes)
+در این نسخه برای کاهش ریسک خطای پیکربندی:
+- روی `runtime.config.json` اعتبارسنجی سخت‌گیرانه انجام می‌شود (مقادیر عددی معتبر، بازه درصد 0 تا 100، شناسه پلن تکراری نباشد).
+- ذخیره `runtime.config.json` به‌صورت اتمیک انجام می‌شود تا فایل ناقص نوشته نشود.
+- wizard فایل `.env` ورودی‌های چندخطی را رد می‌کند تا ساختار env خراب نشود.
+
+برای بررسی سریع صحت تنظیمات:
+```bash
+npm run check
+npm run plans -- list
+```
+
 ## Docker
 ```bash
 docker compose up -d --build
