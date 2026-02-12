@@ -4,6 +4,9 @@
   "description": "Reusable Telegram VPN sales bot bootstrap",
   "main": "src/index.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "setup": "node src/setup.js",
     "start": "node src/index.js",
