@@ -1,4 +1,12 @@
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
 const { loadRuntimeConfig, saveRuntimeConfig } = require('./lib/runtime-config');
+
+const envPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 function help() {
   console.log(`
@@ -17,11 +25,20 @@ function findPlanIndex(plans, id) {
   return plans.findIndex((p) => p.id === id);
 }
 
-function parseNumber(value, fieldName) {
+function parseNumber(value, fieldName, { min, max } = {}) {
   const parsed = Number(value);
-  if (Number.isNaN(parsed)) {
+  if (Number.isNaN(parsed) || !Number.isFinite(parsed)) {
     throw new Error(`${fieldName} باید عدد باشد.`);
   }
+
+  if (typeof min === 'number' && parsed < min) {
+    throw new Error(`${fieldName} نباید کمتر از ${min} باشد.`);
+  }
+
+  if (typeof max === 'number' && parsed > max) {
+    throw new Error(`${fieldName} نباید بیشتر از ${max} باشد.`);
+  }
+
   return parsed;
 }
 
@@ -62,9 +79,9 @@ function main() {
     config.plans.push({
       id,
       name,
-      durationDays: parseNumber(days, 'days'),
-      quotaGb: parseNumber(gb, 'gb'),
-      priceToman: parseNumber(price, 'price'),
+      durationDays: parseNumber(days, 'days', { min: 1 }),
+      quotaGb: parseNumber(gb, 'gb', { min: 1 }),
+      priceToman: parseNumber(price, 'price', { min: 0 }),
       isTest: false,
       enabled: true
     });
@@ -78,6 +95,9 @@ function main() {
     const idx = findPlanIndex(config.plans, id);
     if (idx < 0) {
       throw new Error('plan پیدا نشد.');
+    }
+    if (config.plans.length <= 1) {
+      throw new Error('حداقل یک plan باید باقی بماند. ابتدا یک plan جدید اضافه کنید.');
     }
     config.plans.splice(idx, 1);
     saveRuntimeConfig(config, configPath);
@@ -99,7 +119,10 @@ function main() {
 
   if (command === 'set-threshold') {
     const [percent] = args;
-    config.notifications.lowUsageThresholdPercent = parseNumber(percent, 'percent');
+    config.notifications.lowUsageThresholdPercent = parseNumber(percent, 'percent', {
+      min: 0,
+      max: 100
+    });
     saveRuntimeConfig(config, configPath);
     console.log('✅ درصد هشدار مصرف کم به‌روزرسانی شد.');
     return;
@@ -107,7 +130,7 @@ function main() {
 
   if (command === 'set-expiry-warning') {
     const [days] = args;
-    config.notifications.expiryWarningDays = parseNumber(days, 'days');
+    config.notifications.expiryWarningDays = parseNumber(days, 'days', { min: 0 });
     saveRuntimeConfig(config, configPath);
     console.log('✅ روز هشدار انقضا به‌روزرسانی شد.');
     return;
