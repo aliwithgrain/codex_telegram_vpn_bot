@@ -56,6 +56,7 @@ npm run plans -- set-expiry-warning 2
 برای بررسی سریع صحت تنظیمات:
 ```bash
 npm run check
+npm test
 npm run plans -- list
 ```
 

@@ -97,6 +97,8 @@ function validateRuntimeConfig(parsed) {
 
 function saveRuntimeConfig(config, configPath = getConfigPath()) {
   validateRuntimeConfig(config);
+  fs.mkdirSync(path.dirname(configPath), { recursive: true });
+
   const text = `${JSON.stringify(config, null, 2)}\n`;
   const tmpPath = `${configPath}.tmp`;
   fs.writeFileSync(tmpPath, text, 'utf8');
